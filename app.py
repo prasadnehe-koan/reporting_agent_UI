@@ -179,11 +179,11 @@ col1, col2 = st.columns(2)
 
 with col1:
     if st.button("📊\n\nReport Generator\n\n AI-powered business reports", key="nav_report", use_container_width=True):
-        st.switch_page("pages/1_📊_Report_Generator.py")
+        st.switch_page("pages/1_Report_Generator.py")
 
 with col2:
     if st.button("💬\n\nAI Chatbot\n\nChat with AI about your business data", key="nav_chat", use_container_width=True):
-        st.switch_page("pages/2_💬_Chatbot.py")
+        st.switch_page("pages/2_Chatbot.py")
 
 # ==========================================================
 # FOOTER
@@ -194,3 +194,4 @@ st.markdown("""
     <p style="color: #6b7280;">Powered by Koantek</p>
 </div>
 """, unsafe_allow_html=True)
+
