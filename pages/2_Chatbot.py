@@ -341,45 +341,123 @@ def chat_with_bot(conversation_history):
 with st.sidebar:
     st.markdown("""
     <style>
+        /* Sidebar styling - Theme adaptive */
+        [data-testid="stSidebar"] {
+            background-color: var(--background-color);
+        }
+        
         .sidebar-title {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 700;
             margin-bottom: 1rem;
-            color: #667eea;
+            color: var(--primary-color);
+            text-align: center;
         }
         
-        .chat-item {
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.2s;
+        /* Compact button styling */
+        .stButton button {
+            padding: 0.4rem 0.6rem !important;
+            font-size: 0.85rem !important;
+            border-radius: 6px !important;
+            transition: all 0.2s ease !important;
+            color: var(--text-color) !important;
         }
         
-        .chat-item:hover {
-            background-color: rgba(102, 126, 234, 0.1);
+        .stButton button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3) !important;
         }
         
-        .chat-item-active {
-            background-color: rgba(102, 126, 234, 0.2);
-            border-left: 3px solid #667eea;
+        /* Chat item styling - using columns */
+        div[data-testid="column"] {
+            padding: 0.15rem 0 !important;
         }
         
-        .chat-title {
-            font-weight: 500;
-            font-size: 0.9rem;
-            margin-bottom: 0.25rem;
+        /* Remove extra spacing between elements */
+        div[data-testid="stHorizontalBlock"] {
+            gap: 0.3rem !important;
+            margin-bottom: 0.25rem !important;
         }
         
-        .chat-time {
-            font-size: 0.75rem;
-            color: #6b7280;
+        /* Button text color fix for theme compatibility */
+        .stButton button {
+            color: var(--text-color) !important;
         }
         
-        /* Compact text input styling */
+        .stButton button:disabled {
+            color: var(--secondary-text-color) !important;
+            opacity: 0.5 !important;
+        }
+        
+        /* Compact text input - theme adaptive */
         .stTextInput > div > div > input {
-            padding: 0.4rem 0.5rem;
-            font-size: 0.9rem;
+            padding: 0.35rem 0.5rem !important;
+            font-size: 0.85rem !important;
+            border-radius: 6px !important;
+            background-color: var(--secondary-background-color) !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-color) !important;
+        }
+        
+        .stTextInput > div > div > input:focus {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 1px var(--primary-color) !important;
+        }
+        
+        /* Form styling */
+        .stForm {
+            background-color: transparent !important;
+            border: none !important;
+            padding: 0 !important;
+        }
+        
+        /* Icon buttons - smaller and grouped */
+        div[data-testid="column"] button {
+            min-height: 32px !important;
+            height: 32px !important;
+            padding: 0.25rem 0.4rem !important;
+            font-size: 0.9rem !important;
+        }
+        
+        /* Primary button styling */
+        .stButton button[kind="primary"] {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            border: none !important;
+            color: white !important;
+        }
+        
+        .stButton button[kind="primary"]:hover {
+            background: linear-gradient(135deg, #7b8ff5 0%, #8a5bb5 100%) !important;
+        }
+        
+        /* Secondary button styling - theme adaptive */
+        .stButton button[kind="secondary"] {
+            background-color: var(--secondary-background-color) !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-color) !important;
+        }
+        
+        .stButton button[kind="secondary"]:hover {
+            background-color: var(--background-color) !important;
+            border-color: var(--primary-color) !important;
+        }
+        
+        /* Divider styling - theme adaptive */
+        hr {
+            margin: 0.75rem 0 !important;
+            border-color: var(--border-color) !important;
+        }
+        
+        /* Footer styling - theme adaptive */
+        .footer-info {
+            font-size: 0.75rem;
+            color: var(--secondary-text-color);
+            text-align: center;
+            padding: 0.5rem;
+            background-color: var(--secondary-background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-top: 0.5rem;
         }
     </style>
     """, unsafe_allow_html=True)
@@ -405,7 +483,7 @@ with st.sidebar:
         
         # Check if this chat is being edited
         if st.session_state.editing_chat_id == chat_id:
-            col1, col2 = st.columns([5, 1])
+            col1, col2 = st.columns([4, 1])
             with col1:
                 # Create a form to handle Enter key submission
                 with st.form(key=f"form_{chat_id}", clear_on_submit=False):
@@ -417,7 +495,7 @@ with st.sidebar:
                         placeholder="Enter chat name..."
                     )
                     # Hidden submit button (triggered by Enter)
-                    submitted = st.form_submit_button("Save", type="primary", use_container_width=True)
+                    submitted = st.form_submit_button("💾", use_container_width=True)
                     
                     if submitted:
                         rename_chat(chat_id, new_title)
@@ -430,7 +508,7 @@ with st.sidebar:
                     st.session_state.editing_chat_id = None
                     st.rerun()
         else:
-            col1, col2, col3 = st.columns([4, 0.6, 0.6])
+            col1, col2, col3 = st.columns([6, 1, 1])
             
             with col1:
                 # Regular chat button
@@ -446,19 +524,19 @@ with st.sidebar:
             
             with col2:
                 # Compact edit button
-                if st.button("✏️", key=f"edit_{chat_id}", help="Rename"):
+                if st.button("✏️", key=f"edit_{chat_id}", help="Rename", use_container_width=True):
                     st.session_state.editing_chat_id = chat_id
                     st.rerun()
             
             with col3:
                 if len(st.session_state.chats) > 1:  # Don't allow deleting last chat
-                    if st.button("🗑️", key=f"delete_{chat_id}", help="Delete"):
+                    if st.button("🗑️", key=f"delete_{chat_id}", help="Delete", use_container_width=True):
                         if st.session_state.editing_chat_id == chat_id:
                             st.session_state.editing_chat_id = None
                         delete_chat(chat_id)
                         st.rerun()
     
-    # Footer info
+    # Footer section
     st.markdown("---")
     
     # Clear all history button
@@ -469,7 +547,7 @@ with st.sidebar:
     
     if st.session_state.get('show_confirm', False):
         with col2:
-            if st.button("✅ Confirm", use_container_width=True, key="confirm_clear"):
+            if st.button("✅ Confirm", use_container_width=True, type="primary", key="confirm_clear"):
                 st.session_state.chats = {}
                 clear_all_data_db()
                 create_new_chat()
@@ -477,9 +555,9 @@ with st.sidebar:
                 st.rerun()
     
     st.markdown(f"""
-    <div style="font-size: 0.75rem; color: #6b7280; text-align: center;">
-        {len(st.session_state.chats)} chat session(s)<br>
-        💾 SQLite • Auto-saved
+    <div class="footer-info">
+        📊 {len(st.session_state.chats)} chat session(s)<br>
+        💾 SQLite Auto-saved
     </div>
     """, unsafe_allow_html=True)
 
@@ -497,7 +575,7 @@ st.markdown(f"""
         padding: 1.25rem 1.5rem;
         border-radius: 10px;
         margin-bottom: 1.25rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -512,24 +590,22 @@ st.markdown(f"""
         width: auto;
         max-width: 200px;
         object-fit: contain;
+        filter: brightness(1.1);
     }}
     
     .main-header h1 {{
-        color: white;
+        color: #ffffff !important;
         font-size: 1.5rem;
         font-weight: 700;
         margin: 0;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }}
     
     .main-header p {{
-        color: rgba(255,255,255,0.9);
+        color: rgba(255,255,255,0.95) !important;
         font-size: 0.875rem;
         margin: 0.25rem 0 0 0;
-    }}
-    
-    button[kind="secondary"] {{
-        padding: 0.5rem !important;
-        font-size: 1.2rem !important;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }}
 </style>
 
@@ -635,9 +711,10 @@ if prompt:
 st.markdown("---")
 st.markdown("""
 <div style="text-align: center; font-size: 0.8rem; padding: 0.75rem;">
-    <p style="color: #6b7280;">Powered by Koantek • Chat history stored in SQLite</p>
+    <p style="color: var(--secondary-text-color); margin: 0;">Powered by Koantek • Chat history stored in SQLite</p>
 </div>
 """, unsafe_allow_html=True)
+
 ########################################################################################
 
 # import streamlit as st
@@ -873,4 +950,5 @@ st.markdown("""
 #     <p style="color: #6b7280;">Powered by Koantek</p>
 # </div>
 # """, unsafe_allow_html=True)
+
 
